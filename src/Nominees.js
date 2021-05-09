@@ -2,20 +2,8 @@ import { Component } from 'react';
 import Banner from './Banner.js';
 
 class Nominees extends Component {
-  renderNominees() {
-    const { nominees, handler } = this.props;
-
-    return (
-      <ul>
-        {nominees.map(item => {return (
-          <li><button onClick={handler(item.imdbID)}>x</button> {item.Title} ({item.Year})</li>
-        )})}
-      </ul>
-    );
-  }
-
   render() {
-    const { nomineeCount } = this.props;
+    const { nomineeCount, nominees, handler } = this.props;
 
     return (
       <div>
@@ -23,7 +11,9 @@ class Nominees extends Component {
 
         <Banner nomineeCount={nomineeCount} />
 
-        {this.renderNominees}
+        {nominees.map(item => {
+         return (<li key={item.imdbID}><button onClick={() => handler(item.imdbID)}>x</button> {item.Title} ({item.Year})</li>);
+        })}
 
       </div>
     );

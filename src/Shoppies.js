@@ -12,7 +12,7 @@ class Shoppies extends Component {
     this.nomineeRemoveHandler = this.nomineeRemoveHandler.bind(this);
 
     this.state = {
-      nominees: [{}],
+      nominees: [],
       nomineeCount: 0,
 
       currentQuery: '',
@@ -27,18 +27,24 @@ class Shoppies extends Component {
     this.setState({currentQuery: event.target.value});
   }
 
-  handleSearch() {
+  handleSearch(event) {
+    event.preventDefault();
     const { currentQuery } = this.state;
     if (currentQuery === '') return;
-    this.setState({searchLoaded: false});
+    this.setState({searchLoaded: false, searchList: [{}]});
     fetch(`http://www.omdbapi.com/?apikey=${process.env.REACT_APP_OMDB_API_KEY}&s=${currentQuery}&type=movie`)
       .then(result => result.json())
       .then(result => {
             if (result.Response === "True") {
-              const { Type, Poster, ...returned } = result.Search[0];
+              let returned = result.Search;
+              returned = returned.map(({Type, Poster, ...list}) => list);
+
+              // The following line is required due to certain searches returning the same movie twice.
+              let duplicatesPruned = returned.filter((item, i) => returned.findIndex(otherItem => otherItem.imdbID === item.imdbID) === i);
+
               this.setState({
                 searchQuery: currentQuery,
-                searchList: returned,
+                searchList: duplicatesPruned,
                 searchLoaded: true,
                 searchFound: true,
               });
@@ -55,6 +61,7 @@ class Shoppies extends Component {
 
   nomineeAddHandler(id) {
     const { nominees, nomineeCount, searchList } = this.state;
+    if (nomineeCount === 5) return;
     this.setState({
       nominees: nominees.concat(searchList.find(item => item.imdbID === id)),
       nomineeCount: nomineeCount+1,
@@ -69,23 +76,17 @@ class Shoppies extends Component {
     })
   }
 
-  renderSearch() {
-    const { currentQuery } = this.state;
-    return (
-      <div id="search">
-        <input type="text" value={currentQuery} onChange={this.handleInputChange} />
-        <button onClick={this.handleSearch}>Search</button>
-      </div>
-    )
-  }
-
   render() {
+    const { currentQuery } = this.state;
     return (
       <div id="content">
 
         <h1 id="title">The Shoppies</h1>
 
-        {this.renderSearch()}
+        <div id="search"><form onSubmit={this.handleSearch}>
+          <input type="text" value={currentQuery} onChange={this.handleInputChange} />
+          <button type="submit">Search</button>
+        </form></div>
 
         <div id="container">
           <SearchResults {...this.state} handler={this.nomineeAddHandler} />
