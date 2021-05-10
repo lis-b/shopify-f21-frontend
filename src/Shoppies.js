@@ -1,6 +1,9 @@
+import Banner from './Banner.js';
 import SearchResults from './SearchResults.js';
 import Nominees from './Nominees.js';
+import Credit from './Credit.js';
 import { Component } from 'react';
+import { Search } from 'react-feather';
 
 class Shoppies extends Component {
   constructor(props) {
@@ -77,21 +80,25 @@ class Shoppies extends Component {
   }
 
   render() {
-    const { currentQuery } = this.state;
+    const { currentQuery, nomineeCount } = this.state;
     return (
       <div id="content">
 
         <h1 id="title">The Shoppies</h1>
 
         <div id="search"><form onSubmit={this.handleSearch}>
-          <input type="text" value={currentQuery} onChange={this.handleInputChange} />
-          <button type="submit">Search</button>
+          <input type="text" value={currentQuery} placeholder="Search"  onChange={this.handleInputChange} />
+          <button type="submit"><Search /></button>
         </form></div>
+
+        <Banner nomineeCount={nomineeCount} />
 
         <div id="container">
           <SearchResults {...this.state} handler={this.nomineeAddHandler} />
           <Nominees {...this.state} handler={this.nomineeRemoveHandler} />
         </div>
+
+        <Credit />
 
       </div>
     );

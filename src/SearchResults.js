@@ -4,12 +4,12 @@ class SearchResults extends Component {
   render() {
     const { searchQuery, searchLoaded, searchFound, nominees, searchList, handler } = this.props;
 
-    if (searchQuery === '') return (<div><h2>Please search for a movie</h2></div>);
-    else if (!searchLoaded) return (<div><h2>Loading...</h2></div>);
-    else if (!searchFound) return (<div><h2>No results for "{searchQuery}"</h2></div>);
+    if (searchQuery === '') return (<div id="search-results"><h2>Please search for a movie</h2></div>);
+    else if (!searchLoaded) return (<div id="search-results"><h2>Loading...</h2></div>);
+    else if (!searchFound) return (<div id="search-results"><h2>No results for "{searchQuery}"</h2></div>);
 
     return (
-      <div>
+      <div id="search-results">
         <h2>Results for "{searchQuery}"</h2>
 
         <ul>
