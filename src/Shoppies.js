@@ -42,7 +42,7 @@ class Shoppies extends Component {
     const { currentQuery } = this.state;
     if (currentQuery === '') return;
     this.setState({searchLoaded: false, searchList: [{}]});
-    fetch(`http://www.omdbapi.com/?apikey=${process.env.REACT_APP_OMDB_API_KEY}&s=${currentQuery}&type=movie`)
+    fetch(`https://www.omdbapi.com/?apikey=${process.env.REACT_APP_OMDB_API_KEY}&s=${currentQuery}&type=movie`)
       .then(result => result.json())
       .then(result => {
             if (result.Response === "True") {
