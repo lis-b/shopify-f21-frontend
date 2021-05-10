@@ -4,6 +4,7 @@ import Nominees from './Nominees.js';
 import Credit from './Credit.js';
 import { Component } from 'react';
 import { Search } from 'react-feather';
+import ls from 'local-storage';
 
 class Shoppies extends Component {
   constructor(props) {
@@ -24,6 +25,12 @@ class Shoppies extends Component {
       searchLoaded: false,
       searchFound: true,
     }
+  }
+
+  componentDidMount() {
+    let storedNominees = ls.get('shopify-f21-lisab-nominees');
+    if (storedNominees === null) return;
+    this.setState({nominees: storedNominees});
   }
 
   handleInputChange(event) {
@@ -65,18 +72,22 @@ class Shoppies extends Component {
   nomineeAddHandler(id) {
     const { nominees, nomineeCount, searchList } = this.state;
     if (nomineeCount === 5) return;
+    let newNominees = nominees.concat(searchList.find(item => item.imdbID === id));
     this.setState({
-      nominees: nominees.concat(searchList.find(item => item.imdbID === id)),
+      nominees: newNominees,
       nomineeCount: nomineeCount+1,
     });
+    ls.set('shopify-f21-lisab-nominees', newNominees);
   }
 
   nomineeRemoveHandler(id) {
     const { nominees, nomineeCount } = this.state;
+    let newNominees = nominees.filter(nominee => nominee.imdbID !== id);
     this.setState({
-      nominees: nominees.filter(nominee => nominee.imdbID !== id),
+      nominees: newNominees,
       nomineeCount: nomineeCount-1,
-    })
+    });
+    ls.set('shopify-f21-lisab-nominees', newNominees);
   }
 
   render() {
